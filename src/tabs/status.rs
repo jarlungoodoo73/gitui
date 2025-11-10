@@ -593,6 +593,10 @@ impl Status {
 		}
 	}
 
+	fn create_pull_request(&self) {
+		self.queue.push(InternalEvent::OpenPullRequest);
+	}
+
 	fn undo_last_commit(&self) {
 		self.queue
 			.push(InternalEvent::ConfirmAction(Action::UndoCommit));
@@ -769,6 +773,14 @@ impl Component for Status {
 			));
 
 			out.push(CommandInfo::new(
+				strings::commands::create_pull_request(
+					&self.key_config,
+				),
+				true,
+				!focus_on_diff,
+			));
+
+			out.push(CommandInfo::new(
 				strings::commands::undo_commit(&self.key_config),
 				true,
 				(!self.pending_rebase() && !focus_on_diff)
@@ -895,6 +907,13 @@ impl Component for Status {
 					&& self.can_fetch()
 				{
 					self.pull();
+					Ok(EventState::Consumed)
+				} else if key_match(
+					k,
+					self.key_config.keys.create_pull_request,
+				) && !self.is_focus_on_diff()
+				{
+					self.create_pull_request();
 					Ok(EventState::Consumed)
 				} else if key_match(
 					k,

@@ -126,6 +126,8 @@ pub enum InternalEvent {
 	///
 	Pull(String),
 	///
+	OpenPullRequest,
+	///
 	PushTags,
 	///
 	OptionSwitched(AppOption),
