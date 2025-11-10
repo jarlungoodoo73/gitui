@@ -1845,6 +1845,20 @@ pub mod commands {
 		)
 	}
 
+	pub fn create_pull_request(
+		key_config: &SharedKeyConfig,
+	) -> CommandText {
+		CommandText::new(
+			format!(
+				"PR [{}]",
+				key_config
+					.get_hint(key_config.keys.create_pull_request),
+			),
+			"create pull request",
+			CMD_GROUP_GENERAL,
+		)
+	}
+
 	pub fn fetch_remotes(
 		key_config: &SharedKeyConfig,
 	) -> CommandText {

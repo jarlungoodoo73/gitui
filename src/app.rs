@@ -15,11 +15,11 @@ use crate::{
 		CreateRemotePopup, ExternalEditorPopup, FetchPopup,
 		FileRevlogPopup, FuzzyFindPopup, HelpPopup,
 		InspectCommitPopup, LogSearchPopupPopup, MsgPopup,
-		OptionsPopup, PullPopup, PushPopup, PushTagsPopup,
-		RemoteListPopup, RenameBranchPopup, RenameRemotePopup,
-		ResetPopup, RevisionFilesPopup, StashMsgPopup,
-		SubmodulesListPopup, TagCommitPopup, TagListPopup,
-		UpdateRemoteUrlPopup,
+		OptionsPopup, PullPopup, PullRequestPopup, PushPopup,
+		PushTagsPopup, RemoteListPopup, RenameBranchPopup,
+		RenameRemotePopup, ResetPopup, RevisionFilesPopup,
+		StashMsgPopup, SubmodulesListPopup, TagCommitPopup,
+		TagListPopup, UpdateRemoteUrlPopup,
 	},
 	queue::{
 		Action, AppTabs, InternalEvent, NeedsUpdate, Queue,
@@ -85,6 +85,7 @@ pub struct App {
 	push_popup: PushPopup,
 	push_tags_popup: PushTagsPopup,
 	pull_popup: PullPopup,
+	pull_request_popup: PullRequestPopup,
 	fetch_popup: FetchPopup,
 	tag_commit_popup: TagCommitPopup,
 	create_branch_popup: CreateBranchPopup,
@@ -192,6 +193,7 @@ impl App {
 			push_tags_popup: PushTagsPopup::new(&env),
 			reset_popup: ResetPopup::new(&env),
 			pull_popup: PullPopup::new(&env),
+			pull_request_popup: PullRequestPopup::new(&env),
 			fetch_popup: FetchPopup::new(&env),
 			tag_commit_popup: TagCommitPopup::new(&env),
 			create_branch_popup: CreateBranchPopup::new(&env),
@@ -541,6 +543,7 @@ impl App {
 			push_popup,
 			push_tags_popup,
 			pull_popup,
+			pull_request_popup,
 			fetch_popup,
 			options_popup,
 			confirm_popup,
@@ -810,6 +813,13 @@ impl App {
 					));
 				}
 				flags.insert(NeedsUpdate::ALL);
+			}
+			InternalEvent::OpenPullRequest => {
+				if let Err(error) = self.pull_request_popup.open() {
+					self.queue.push(InternalEvent::ShowErrorMsg(
+						error.to_string(),
+					));
+				}
 			}
 			InternalEvent::FetchRemotes => {
 				if let Err(error) = self.fetch_popup.fetch() {
